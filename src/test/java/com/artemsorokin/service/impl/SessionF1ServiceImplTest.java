@@ -1,4 +1,4 @@
-package com.artemsorokin.service;
+package com.artemsorokin.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,17 +15,18 @@ import com.artemsorokin.model.OpenF1SessionResponse;
 import com.artemsorokin.model.SessionF1;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class SessionF1ServiceTest {
+class SessionF1ServiceImplTest {
 
   @Mock private OpenF1ApiClient openF1ApiClient;
 
-  @InjectMocks private SessionF1Service sessionF1Service;
+  @InjectMocks private SessionF1ServiceImpl sessionF1ServiceImpl;
 
   @BeforeEach
   void setUp() {
@@ -56,7 +57,7 @@ class SessionF1ServiceTest {
       when(openF1ApiClient.getDrivers(123)).thenReturn(List.of(driverResponse));
 
       // Act
-      var sessions = sessionF1Service.fetchSessions("USA", "RACE", "2023");
+      var sessions = sessionF1ServiceImpl.fetchSessions("USA", "RACE", "2023");
 
       // Assert
       assertEquals(1, sessions.size());
@@ -92,7 +93,7 @@ class SessionF1ServiceTest {
       when(openF1ApiClient.getDrivers(sessionKey)).thenReturn(List.of(driverResponse));
 
       // Act
-      List<SessionF1> sessions = sessionF1Service.getSessionByKey(sessionKey);
+      List<SessionF1> sessions = sessionF1ServiceImpl.getSessionByKey(sessionKey);
 
       // Assert
       assertEquals(1, sessions.size());
@@ -117,7 +118,7 @@ class SessionF1ServiceTest {
         .thenReturn(Collections.emptyList());
 
     // Act
-    List<SessionF1> sessions = sessionF1Service.fetchSessions(countryName, sessionType, year);
+    List<SessionF1> sessions = sessionF1ServiceImpl.fetchSessions(countryName, sessionType, year);
 
     // Assert
     assertEquals(0, sessions.size());
@@ -137,7 +138,7 @@ class SessionF1ServiceTest {
     when(openF1ApiClient.getSessions(countryName, sessionType, year)).thenReturn(null);
 
     // Act
-    List<SessionF1> sessions = sessionF1Service.fetchSessions(countryName, sessionType, year);
+    List<SessionF1> sessions = sessionF1ServiceImpl.fetchSessions(countryName, sessionType, year);
 
     // Assert
     assertEquals(0, sessions.size());

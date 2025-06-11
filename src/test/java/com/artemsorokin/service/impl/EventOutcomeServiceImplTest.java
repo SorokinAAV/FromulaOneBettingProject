@@ -1,4 +1,4 @@
-package com.artemsorokin.service;
+package com.artemsorokin.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,17 +10,18 @@ import com.artemsorokin.repository.UserRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class EventOutcomeServiceTest {
+class EventOutcomeServiceImplTest {
 
   @Mock private UserRepository userRepository;
 
-  @InjectMocks private EventOutcomeService eventOutcomeService;
+  @InjectMocks private EventOutcomeServiceImpl eventOutcomeServiceImpl;
 
   @BeforeEach
   void setUp() {
@@ -53,7 +54,7 @@ class EventOutcomeServiceTest {
     when(userRepository.getUser("user1")).thenReturn(user);
 
     // Act
-    String result = eventOutcomeService.processEventOutcome(eventOutcome);
+    String result = eventOutcomeServiceImpl.processEventOutcome(eventOutcome);
 
     // Assert
     assertEquals("Event outcome processed successfully!", result);
@@ -73,7 +74,7 @@ class EventOutcomeServiceTest {
     when(userRepository.getAllBets()).thenReturn(Collections.emptyMap());
 
     // Act
-    String result = eventOutcomeService.processEventOutcome(eventOutcome);
+    String result = eventOutcomeServiceImpl.processEventOutcome(eventOutcome);
 
     // Assert
     assertEquals("Event outcome processed successfully!", result);
@@ -95,7 +96,7 @@ class EventOutcomeServiceTest {
     when(userRepository.getUser(userId)).thenReturn(user);
 
     // Act
-    eventOutcomeService.findWinnerAndPrize(List.of(bet), 123, "driver1", userId);
+    eventOutcomeServiceImpl.findWinnerAndPrize(List.of(bet), 123, "driver1", userId);
 
     // Assert
     assertEquals(BetStatus.WON, bet.getBetStatus());
@@ -116,7 +117,7 @@ class EventOutcomeServiceTest {
             BetStatus.ACCEPTED);
 
     // Act
-    eventOutcomeService.findWinnerAndPrize(List.of(bet), 123, "driver1", userId);
+    eventOutcomeServiceImpl.findWinnerAndPrize(List.of(bet), 123, "driver1", userId);
 
     // Assert
     assertEquals(BetStatus.LOST, bet.getBetStatus());
@@ -130,7 +131,7 @@ class EventOutcomeServiceTest {
         List.of(createDriver("driver1", "DRIVER", 3), createDriver("driver2", "DRIVER", 2));
 
     // Act
-    int odds = eventOutcomeService.findDriverOdd(drivers, "driver1");
+    int odds = eventOutcomeServiceImpl.findDriverOdd(drivers, "driver1");
 
     // Assert
     assertEquals(3, odds);
@@ -147,7 +148,7 @@ class EventOutcomeServiceTest {
         assertThrows(
             F1BetException.class,
             () -> {
-              eventOutcomeService.findDriverOdd(drivers, "driver3");
+              eventOutcomeServiceImpl.findDriverOdd(drivers, "driver3");
             });
 
     assertEquals("Driver not found: driver3", exception.getMessage());

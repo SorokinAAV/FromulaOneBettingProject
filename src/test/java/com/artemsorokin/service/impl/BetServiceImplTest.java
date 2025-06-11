@@ -1,4 +1,4 @@
-package com.artemsorokin.service;
+package com.artemsorokin.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import com.artemsorokin.model.*;
 import com.artemsorokin.repository.UserRepository;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,16 +16,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-class BetServiceTest {
+class BetServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
 
     @Mock
-    private SessionF1Service sessionF1Service;
+    private SessionF1ServiceImpl sessionF1ServiceImpl;
 
     @InjectMocks
-    private BetService betService;
+    private BetServiceImpl betServiceImpl;
 
     @BeforeEach
     void setUp() {
@@ -38,7 +39,7 @@ class BetServiceTest {
         when(userRepository.getUser(anyString())).thenReturn(null);
 
         // Act
-        ResponseEntity<BetResponse> response = betService.placeBet(betRequest);
+        ResponseEntity<BetResponse> response = betServiceImpl.placeBet(betRequest);
 
         // Assert
         assertEquals(404, response.getStatusCode().value());
@@ -56,7 +57,7 @@ class BetServiceTest {
         when(userRepository.getUser("user1")).thenReturn(user);
 
         // Act
-        ResponseEntity<BetResponse> response = betService.placeBet(betRequest);
+        ResponseEntity<BetResponse> response = betServiceImpl.placeBet(betRequest);
 
         // Assert
         assertEquals(400, response.getStatusCode().value());
@@ -72,10 +73,10 @@ class BetServiceTest {
         BetRequest betRequest = new BetRequest("user1", 123, "driver1", 50.0);
         User user = new User("user1", 100.0);
         when(userRepository.getUser("user1")).thenReturn(user);
-        when(sessionF1Service.getSessionByKey(123)).thenReturn(null);
+        when(sessionF1ServiceImpl.getSessionByKey(123)).thenReturn(null);
 
         // Act
-        ResponseEntity<BetResponse> response = betService.placeBet(betRequest);
+        ResponseEntity<BetResponse> response = betServiceImpl.placeBet(betRequest);
 
         // Assert
         assertEquals(404, response.getStatusCode().value());
@@ -93,10 +94,10 @@ class BetServiceTest {
         SessionF1 sessionF1 = SessionF1.builder().build();
 
         when(userRepository.getUser("user1")).thenReturn(user);
-        when(sessionF1Service.getSessionByKey(123)).thenReturn(List.of(sessionF1));
+        when(sessionF1ServiceImpl.getSessionByKey(123)).thenReturn(List.of(sessionF1));
 
         // Act
-        ResponseEntity<BetResponse> response = betService.placeBet(betRequest);
+        ResponseEntity<BetResponse> response = betServiceImpl.placeBet(betRequest);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
@@ -118,7 +119,7 @@ class BetServiceTest {
         when(userRepository.getUserBets(userId)).thenReturn(List.of(bet1, bet2));
 
         // Act
-        ResponseEntity<UserBet> response = betService.getUserBets(userId);
+        ResponseEntity<UserBet> response = betServiceImpl.getUserBets(userId);
 
         // Assert
         assertEquals(200, response.getStatusCode().value());
