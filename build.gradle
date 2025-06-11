@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = "com.artemsorokin"
+version = "1.0-SNAPSHOT"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    //set('springCloudVersion', "2023.0.2")
+
+    lombokVersion = '1.18.38'
+    springCloudFunction = '4.2.2'
+    jsonVersion = '20250107'
+    springCloudVersion = '2024.0.1'
+    apacheCommonsVersion = '2.18.0'
+    saxonVersion = '12.5'
+    fasterxmlUuidGeneratorVersion = '5.1.0'
+    jsoupVersion = '1.19.1'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-function-dependencies:$springCloudFunction"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.cloud:spring-cloud-starter-function-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+    implementation "org.json:json:${jsonVersion}"
+    implementation "commons-io:commons-io:${apacheCommonsVersion}"
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+jar {
+    manifest {
+        attributes 'Start-Class': 'com.artemsorokin.Application'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+assemble.dependsOn = [shadowJar]
+
+import com.github.jengelman.gradle.plugins.shadow.transformers.PropertiesFileTransformer
+
+shadowJar {
+    archiveClassifier = 'aws'
+    dependencies {
+        exclude(
+                dependency("org.springframework.cloud:spring-cloud-function-web:$springCloudFunction"))
+    }
+    archiveFileName = 'formula-one-betting-project.jar'
+    // Required for Spring
+    mergeServiceFiles()
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.tooling'
+    append 'META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports'
+    append 'META-INF/spring/org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration.imports'
+    transform(PropertiesFileTransformer) {
+        paths = ['META-INF/spring.factories']
+        mergeStrategy = "append"
+    }
+}
