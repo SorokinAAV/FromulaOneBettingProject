@@ -1,7 +1,7 @@
 package com.artemsorokin.service.impl;
 
-import static com.artemsorokin.Util.F1Utils.mapDrivers;
-import static com.artemsorokin.Util.F1Utils.mapSession;
+import static com.artemsorokin.util.F1Utils.mapDrivers;
+import static com.artemsorokin.util.F1Utils.mapSession;
 
 import com.artemsorokin.client.OpenF1ApiClient;
 import com.artemsorokin.model.Driver;

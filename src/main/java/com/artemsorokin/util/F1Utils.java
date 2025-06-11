@@ -1,4 +1,4 @@
-package com.artemsorokin.Util;
+package com.artemsorokin.util;
 
 import com.artemsorokin.model.Driver;
 import com.artemsorokin.model.F1DriverResponse;

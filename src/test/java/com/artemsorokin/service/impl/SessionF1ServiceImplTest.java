@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.artemsorokin.Util.F1Utils;
+import com.artemsorokin.util.F1Utils;
 import com.artemsorokin.client.OpenF1ApiClient;
 import com.artemsorokin.model.Driver;
 import com.artemsorokin.model.F1DriverResponse;
