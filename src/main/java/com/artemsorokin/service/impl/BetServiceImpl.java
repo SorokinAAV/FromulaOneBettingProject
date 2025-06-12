@@ -8,6 +8,7 @@ import com.artemsorokin.model.User;
 import com.artemsorokin.model.UserBet;
 import com.artemsorokin.repository.UserRepository;
 import com.artemsorokin.service.BetService;
+import com.artemsorokin.service.SessionF1Service;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class BetServiceImpl implements BetService {
 
   private final UserRepository userRepository;
-  private final SessionF1ServiceImpl sessionF1ServiceImpl;
+  private final SessionF1Service sessionF1Service;
 
   public ResponseEntity<BetResponse> placeBet(BetRequest betRequest) {
     User user = userRepository.getUser(betRequest.getUserId());
@@ -34,7 +35,7 @@ public class BetServiceImpl implements BetService {
                   betRequest, BetStatus.INVALID_BET_AMOUNT, "Insufficient balance!", null));
     }
 
-    var sessionF1 = sessionF1ServiceImpl.getSessionByKey(betRequest.getSessionKey());
+    var sessionF1 = sessionF1Service.getSessionByKey(betRequest.getSessionKey());
 
     if (sessionF1 == null || sessionF1.isEmpty() || sessionF1.getFirst() == null) {
       return ResponseEntity.status(404)

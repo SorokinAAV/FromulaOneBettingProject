@@ -8,10 +8,9 @@ import com.artemsorokin.model.Driver;
 import com.artemsorokin.model.F1DriverResponse;
 import com.artemsorokin.model.OpenF1SessionResponse;
 import com.artemsorokin.model.SessionF1;
+import com.artemsorokin.service.SessionF1Service;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.artemsorokin.service.SessionF1Service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

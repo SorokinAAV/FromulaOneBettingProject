@@ -4,5 +4,5 @@ import com.artemsorokin.model.EventOutcome;
 
 public interface EventOutcomeService {
 
-  public String processEventOutcome(EventOutcome eventOutcome);
+  String processEventOutcome(EventOutcome eventOutcome);
 }

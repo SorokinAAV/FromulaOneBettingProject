@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import com.artemsorokin.model.*;
-import com.artemsorokin.repository.UserRepository;
+import com.artemsorokin.repository.impl.UserRepositoryImpl;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 class BetServiceImplTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserRepositoryImpl userRepositoryImpl;
 
     @Mock
     private SessionF1ServiceImpl sessionF1ServiceImpl;
@@ -36,7 +36,7 @@ class BetServiceImplTest {
     void placeBet_UserNotFound() {
         // Arrange
         BetRequest betRequest = new BetRequest("user1", 123, "driver1", 100.0);
-        when(userRepository.getUser(anyString())).thenReturn(null);
+        when(userRepositoryImpl.getUser(anyString())).thenReturn(null);
 
         // Act
         ResponseEntity<BetResponse> response = betServiceImpl.placeBet(betRequest);
@@ -45,8 +45,8 @@ class BetServiceImplTest {
         assertEquals(404, response.getStatusCode().value());
         assertEquals(BetStatus.USER_NOT_FOUND, response.getBody().getStatus());
         assertEquals("User not found", response.getBody().getMessage());
-        verify(userRepository, never()).updateUserBalance(anyString(), anyDouble());
-        verify(userRepository, never()).addBet(anyString(), any());
+        verify(userRepositoryImpl, never()).updateUserBalance(anyString(), anyDouble());
+        verify(userRepositoryImpl, never()).addBet(anyString(), any());
     }
 
     @Test
@@ -54,7 +54,7 @@ class BetServiceImplTest {
         // Arrange
         BetRequest betRequest = new BetRequest("user1", 123, "driver1", 100.0);
         User user = new User("user1", 50.0);
-        when(userRepository.getUser("user1")).thenReturn(user);
+        when(userRepositoryImpl.getUser("user1")).thenReturn(user);
 
         // Act
         ResponseEntity<BetResponse> response = betServiceImpl.placeBet(betRequest);
@@ -63,8 +63,8 @@ class BetServiceImplTest {
         assertEquals(400, response.getStatusCode().value());
         assertEquals(BetStatus.INVALID_BET_AMOUNT, response.getBody().getStatus());
         assertEquals("Insufficient balance!", response.getBody().getMessage());
-        verify(userRepository, never()).updateUserBalance(anyString(), anyDouble());
-        verify(userRepository, never()).addBet(anyString(), any());
+        verify(userRepositoryImpl, never()).updateUserBalance(anyString(), anyDouble());
+        verify(userRepositoryImpl, never()).addBet(anyString(), any());
     }
 
     @Test
@@ -72,7 +72,7 @@ class BetServiceImplTest {
         // Arrange
         BetRequest betRequest = new BetRequest("user1", 123, "driver1", 50.0);
         User user = new User("user1", 100.0);
-        when(userRepository.getUser("user1")).thenReturn(user);
+        when(userRepositoryImpl.getUser("user1")).thenReturn(user);
         when(sessionF1ServiceImpl.getSessionByKey(123)).thenReturn(null);
 
         // Act
@@ -82,8 +82,8 @@ class BetServiceImplTest {
         assertEquals(404, response.getStatusCode().value());
         assertEquals(BetStatus.INVALID_SESSION_KEY, response.getBody().getStatus());
         assertEquals("Session not found", response.getBody().getMessage());
-        verify(userRepository, never()).updateUserBalance(anyString(), anyDouble());
-        verify(userRepository, never()).addBet(anyString(), any());
+        verify(userRepositoryImpl, never()).updateUserBalance(anyString(), anyDouble());
+        verify(userRepositoryImpl, never()).addBet(anyString(), any());
     }
 
     @Test
@@ -93,7 +93,7 @@ class BetServiceImplTest {
         User user = new User("user1", 100.0);
         SessionF1 sessionF1 = SessionF1.builder().build();
 
-        when(userRepository.getUser("user1")).thenReturn(user);
+        when(userRepositoryImpl.getUser("user1")).thenReturn(user);
         when(sessionF1ServiceImpl.getSessionByKey(123)).thenReturn(List.of(sessionF1));
 
         // Act
@@ -103,8 +103,8 @@ class BetServiceImplTest {
         assertEquals(200, response.getStatusCode().value());
         assertEquals(BetStatus.ACCEPTED, response.getBody().getStatus());
         assertEquals("Bet placed successfully!", response.getBody().getMessage());
-        verify(userRepository).updateUserBalance("user1", 50.0); // Deduct balance
-        verify(userRepository).addBet(eq("user1"), any(Bet.class));
+        verify(userRepositoryImpl).updateUserBalance("user1", 50.0); // Deduct balance
+        verify(userRepositoryImpl).addBet(eq("user1"), any(Bet.class));
     }
 
     @Test
@@ -115,8 +115,8 @@ class BetServiceImplTest {
         Bet bet1 = new Bet(SessionF1.builder().build(), "driver1", 50.0, BetStatus.ACCEPTED);
         Bet bet2 = new Bet(SessionF1.builder().build(), "driver2", 30.0, BetStatus.ACCEPTED);
 
-        when(userRepository.getUser(userId)).thenReturn(user);
-        when(userRepository.getUserBets(userId)).thenReturn(List.of(bet1, bet2));
+        when(userRepositoryImpl.getUser(userId)).thenReturn(user);
+        when(userRepositoryImpl.getUserBets(userId)).thenReturn(List.of(bet1, bet2));
 
         // Act
         ResponseEntity<UserBet> response = betServiceImpl.getUserBets(userId);
@@ -126,7 +126,7 @@ class BetServiceImplTest {
         assertEquals(userId, response.getBody().getUserId());
         assertEquals(2, response.getBody().getBets().size());
         assertEquals(100.0, response.getBody().getTotalBalance());
-        verify(userRepository).getUser(userId);
-        verify(userRepository).getUserBets(userId);
+        verify(userRepositoryImpl).getUser(userId);
+        verify(userRepositoryImpl).getUserBets(userId);
     }
 }

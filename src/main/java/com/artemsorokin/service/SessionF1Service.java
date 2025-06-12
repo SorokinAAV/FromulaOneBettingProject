@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface SessionF1Service {
 
-    public List<SessionF1> fetchSessions(String countryName, String sessionType, String year);
+    List<SessionF1> fetchSessions(String countryName, String sessionType, String year);
 
-    public List<SessionF1> getSessionByKey(int sessionKey);
+    List<SessionF1> getSessionByKey(int sessionKey);
 }

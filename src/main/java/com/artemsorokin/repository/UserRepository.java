@@ -2,44 +2,18 @@ package com.artemsorokin.repository;
 
 import com.artemsorokin.model.Bet;
 import com.artemsorokin.model.User;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public class UserRepository {
+public interface UserRepository {
 
-    private final Map<String, User> userStore = new HashMap<>();
-    private final Map<String, List<Bet>> betStore = new HashMap<>();
+  User getUser(String userId);
 
-    public UserRepository() {
-        // Simulate user registration: assign each user 100 EUR balance
-        userStore.put("123", new User("123", 100.0));
-        userStore.put("456", new User("456", 100.0));
-        userStore.put("789", new User("789", 100.0));
-    }
+  void updateUserBalance(String userId, double newBalance);
 
-    public User getUser(String userId) {
-        return userStore.get(userId);
-    }
+  void addBet(String userId, Bet bet);
 
-    public void updateUserBalance(String userId, double newBalance) {
-        User user = userStore.get(userId);
-        if (user != null) {
-            user.setBalance(newBalance);
-        }
-    }
+  List<Bet> getUserBets(String userId);
 
-    public void addBet(String userId, Bet bet) {
-        betStore.computeIfAbsent(userId, k -> new java.util.ArrayList<>()).add(bet);
-    }
-
-    public List<Bet> getUserBets(String userId) {
-        return betStore.getOrDefault(userId, new java.util.ArrayList<>());
-    }
-
-    public Map<String, List<Bet>> getAllBets() {
-        return betStore;
-    }
+  Map<String, List<Bet>> getAllBets();
 }

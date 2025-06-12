@@ -6,7 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.artemsorokin.exception.F1BetException;
 import com.artemsorokin.model.*;
-import com.artemsorokin.repository.UserRepository;
+import com.artemsorokin.repository.impl.UserRepositoryImpl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +19,7 @@ import org.mockito.MockitoAnnotations;
 
 class EventOutcomeServiceImplTest {
 
-  @Mock private UserRepository userRepository;
+  @Mock private UserRepositoryImpl userRepositoryImpl;
 
   @InjectMocks private EventOutcomeServiceImpl eventOutcomeServiceImpl;
 
@@ -50,8 +50,8 @@ class EventOutcomeServiceImplTest {
 
     User user = new User("user1", 500.0);
 
-    when(userRepository.getAllBets()).thenReturn(allBets);
-    when(userRepository.getUser("user1")).thenReturn(user);
+    when(userRepositoryImpl.getAllBets()).thenReturn(allBets);
+    when(userRepositoryImpl.getUser("user1")).thenReturn(user);
 
     // Act
     String result = eventOutcomeServiceImpl.processEventOutcome(eventOutcome);
@@ -61,24 +61,24 @@ class EventOutcomeServiceImplTest {
     assertEquals(BetStatus.WON, bet1.getBetStatus()); // Winning bet
     assertEquals(BetStatus.ACCEPTED, bet2.getBetStatus()); // Losing bet
 
-    verify(userRepository)
+    verify(userRepositoryImpl)
         .updateUserBalance("user1", 800.0); // Updated balance = 500 (initial) + 300 (prize)
-    verify(userRepository).getAllBets();
-    verify(userRepository).getUser("user1");
+    verify(userRepositoryImpl).getAllBets();
+    verify(userRepositoryImpl).getUser("user1");
   }
 
   @Test
   void processEventOutcome_NoBets() {
     // Arrange
     EventOutcome eventOutcome = new EventOutcome(123, "driver1");
-    when(userRepository.getAllBets()).thenReturn(Collections.emptyMap());
+    when(userRepositoryImpl.getAllBets()).thenReturn(Collections.emptyMap());
 
     // Act
     String result = eventOutcomeServiceImpl.processEventOutcome(eventOutcome);
 
     // Assert
     assertEquals("Event outcome processed successfully!", result);
-    verify(userRepository).getAllBets();
+    verify(userRepositoryImpl).getAllBets();
   }
 
   @Test
@@ -93,16 +93,16 @@ class EventOutcomeServiceImplTest {
             BetStatus.ACCEPTED);
     User user = new User("user1", 500.0);
 
-    when(userRepository.getUser(userId)).thenReturn(user);
+    when(userRepositoryImpl.getUser(userId)).thenReturn(user);
 
     // Act
     eventOutcomeServiceImpl.findWinnerAndPrize(List.of(bet), 123, "driver1", userId);
 
     // Assert
     assertEquals(BetStatus.WON, bet.getBetStatus());
-    verify(userRepository)
+    verify(userRepositoryImpl)
         .updateUserBalance("user1", 800.0); // Updated balance = 500 (initial) + 300 (prize)
-    verify(userRepository).getUser("user1");
+    verify(userRepositoryImpl).getUser("user1");
   }
 
   @Test
@@ -121,7 +121,7 @@ class EventOutcomeServiceImplTest {
 
     // Assert
     assertEquals(BetStatus.LOST, bet.getBetStatus());
-    verifyNoInteractions(userRepository); // No balance update occurs for losing bets
+    verifyNoInteractions(userRepositoryImpl); // No balance update occurs for losing bets
   }
 
   @Test

@@ -7,10 +7,9 @@ import com.artemsorokin.model.Driver;
 import com.artemsorokin.model.EventOutcome;
 import com.artemsorokin.model.User;
 import com.artemsorokin.repository.UserRepository;
+import com.artemsorokin.service.EventOutcomeService;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.artemsorokin.service.EventOutcomeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
